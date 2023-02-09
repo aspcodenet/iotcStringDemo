@@ -5,18 +5,48 @@
 #include <stdlib.h>
 #include "safeinput.h"
 
+
+bool parseLong(const char *str, long *val)
+{
+    char *temp;
+    bool rc = true;
+    errno = 0;
+    *val = strtol(str, &temp, 0);
+
+    if (temp == str || *temp != '\0' ||
+        ((*val == LONG_MIN || *val == LONG_MAX) && errno == ERANGE))
+        rc = false;
+
+    return rc;
+}
+
+
+
+bool parseFloat(const char *str, float *val)
+{
+    char *temp;
+    bool rc = true;
+    errno = 0;
+    *val = strtof(str, &temp);
+
+    if (temp == str || *temp != '\0' )
+        rc = false;
+
+    return rc;
+}
+
+
 bool GetInputInt(char* prompt, int* value)
 {
 	char buff[255];
 	if (GetInput(prompt, buff, sizeof(buff)) != INPUT_RESULT_OK)
 		return false;
 	long l = LONG_MIN;
-
-	l = strtol(buff, NULL, 10);
-	if (l == LONG_MIN) return false;
+    if(!parseLong(buff,&l)) return false;
 	*value = l;
 	return true;
 }
+
 
 
 bool GetInputFloat(char* prompt, float* value)
@@ -26,8 +56,7 @@ bool GetInputFloat(char* prompt, float* value)
 		return false;
 	float l = -100000000.0f;
 
-	l = strtof(buff, NULL, 10);
-	if (l == -100000000.0f) return false;
+    if(!parseFloat(buff,&l)) return false;
 	*value = l;
 	return true;
 }
@@ -50,8 +79,9 @@ INPUT_RESULT GetInput(char* prompt, char* buff, int maxSize)
 	{
 		printf("%s", prompt);
 	}
-	if (fgets(buff, maxSize, stdin) == NULL)
-		return INPUT_RESULT_NO_INPUT;
+	if (fgets(buff, maxSize, stdin) == NULL || strlen(buff) == 1 && buff[0] == '\n')
+		return INPUT_RESULT_NO_INPUT; 
+    
 
 	// If it was too long, there'll be no newline. In that case, we flush
 	// to end of line so that excess doesn't affect the next call.
@@ -70,26 +100,26 @@ INPUT_RESULT GetInput(char* prompt, char* buff, int maxSize)
 
 
 
-int main2()
-{
-	//char* s = "";
-	//scanf("%s", s);
-	//printf(s);
+// int main2()
+// {
+// 	//char* s = "";
+// 	//scanf("%s", s);
+// 	//printf(s);
 
-	//char buf[10];
-	//scanf("%s", buf);
+// 	//char buf[10];
+// 	//scanf("%s", buf);
 
-	char name[80];
-	INPUT_RESULT res = GetInput("Skriv in namn", name, sizeof(name));
-	if (res != INPUT_RESULT_OK) return;
+// 	char name[80];
+// 	INPUT_RESULT res = GetInput("Skriv in namn", name, sizeof(name));
+// 	if (res != INPUT_RESULT_OK) return;
 
 
-	if (name == "Stefan")
-	{
-		/* Funkar alltså inte - hurrra för C*/
-		printf("Ja");
-	}
+// 	if (name == "Stefan")
+// 	{
+// 		/* Funkar alltsÃ¥ inte - hurrra fÃ¶r C*/
+// 		printf("Ja");
+// 	}
 
-	printf("Hejsan %s", name);
+// 	printf("Hejsan %s", name);
 
-}
+// }
