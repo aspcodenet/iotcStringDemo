@@ -78,7 +78,7 @@ INPUT_RESULT GetInput(char* prompt, char* buff, int maxSize)
 	{
 		printf("%s", prompt);
 	}
-	if (fgets(buff, maxSize, stdin) == NULL || strlen(buff) == 1 && buff[0] == '\n')
+	if (fgets(buff, maxSize, stdin) == NULL || (strlen(buff) == 1 && buff[0] == '\n'))
 		return INPUT_RESULT_NO_INPUT; 
     
 
